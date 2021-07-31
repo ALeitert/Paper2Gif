@@ -171,6 +171,40 @@ class Program
         }
 
 
+        // --- Crop images. ---
+
+        string tmpSmlPath = Path.Combine(tmpOutPath, "smlPng");
+        RunTerminalCommand("mkdir", tmpSmlPath, tmpOutPath);
+
+        DirectoryInfo pngDir = new DirectoryInfo(tmpPngPath);
+        foreach (FileInfo fi in pngDir.GetFiles())
+        {
+            // Works for LNCS style.
+            const int w = 140;
+            const int h = 210;
+            const int x = 35;
+            const int y = 35;
+            RunTerminalCommand
+            (
+                "convert",
+                string.Format
+                (
+                    "{0} -crop {1}x{2}+{3}+{4} {5}",
+                    new object[]
+                    {
+                        fi.Name,
+                        w,
+                        h,
+                        x,
+                        y,
+                        Path.Combine(tmpSmlPath, fi.Name)
+                    }
+                ),
+                tmpPngPath
+            );
+        }
+
+
 
         // --- Cleanup: Remove temporary folders. ---
 
