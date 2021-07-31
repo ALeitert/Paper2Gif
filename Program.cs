@@ -36,6 +36,24 @@ class Program
             Console.WriteLine("Given path is not a git repository.");
             return;
         }
+
+
+        // --- Create temporary directory and copy the repository into it. ---
+
+        string tmpTexPath = RunTerminalCommand("mktemp", "-d", "./");
+        RunTerminalCommand
+        (
+            "cp",
+            "-R " + repoGitPath + " " + tmpTexPath,
+            "./"
+        );
+
+
+
+
+        // --- Cleanup: Remove temporary folders. ---
+
+        RunTerminalCommand("rm", tmpTexPath + " -r", "./");
     }
 
     // Helper function to run terminal commands.
