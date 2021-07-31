@@ -8,6 +8,17 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("*** Paper 2 Code ***");
+
+
+        // --- Program arguments ---
+
+        //   0: The path to the repository. Must contain a .git directory.
+
+        //   1: The name of the tex-file. Only the name of the file, not the
+        //      whole path.
+
+        //   2: The branch which to use. If not given, the program tries the
+        //      branches 'master' and 'main' (in that order).
     }
 
     // Helper function to run terminal commands.
