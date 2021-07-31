@@ -111,10 +111,53 @@ class Program
 
 
 
+        // --- Compile each version. ---
+
+        // Create temporary directory for outputs.
+        string tmpOutPath = RunTerminalCommand("mktemp", "-d", "./");
+
+        // Unfortunately needed (both of them).
+        // ToDo: find better way to do that.
+        RunTerminalCommand("mkdir", "latexmk", tmpOutPath);
+        RunTerminalCommand("mkdir", "tikzCache", Path.Combine(tmpOutPath, "latexmk"));
+        RunTerminalCommand("mkdir", "tikzCache", tmpTexPath);
+
+
+        // TeX-file specified?
+        if (args.Length < 2)
+        {
+            Console.WriteLine("No TeX-file specified.");
+            return;
+        }
+
+        for (int i = commitIds.Count - 1; i >= 0; i--)
+        {
+            RunTerminalCommand("git", "checkout -q " + commitIds[i], tmpTexPath);
+
+            if (!File.Exists(Path.Combine(tmpTexPath, args[1])))
+            {
+                Console.WriteLine("TeX-file not found.");
+                return;
+            }
+
+            // Parameters for compiler.
+            string lmkArgs =
+                "-outdir='" + Path.Combine(tmpOutPath, "latexmk") + "' " +
+                "-quiet -pdf -pdflatex='" +
+                    "pdflatex -shell-escape -interaction=nonstopmode %O %S" +
+                    "' " +
+                args[1];
+
+            // Compile.
+            RunTerminalCommand("latexmk", lmkArgs, tmpTexPath);
+        }
+
+
 
         // --- Cleanup: Remove temporary folders. ---
 
         RunTerminalCommand("rm", tmpTexPath + " -r", "./");
+        RunTerminalCommand("rm", tmpOutPath + " -r", "./");
     }
 
     // Helper function to run terminal commands.
