@@ -345,7 +345,10 @@ class Program
 
         // --- Cleanup: Remove temporary folders. ---
 
+        RunTerminalCommand("mv", optPath + " ./" + args[1] + ".gif", "./");
         RunTerminalCommand("rm", tmpPath + " -r", "./");
+
+        Console.WriteLine("Done.");
     }
 
     // Helper function to run terminal commands.
