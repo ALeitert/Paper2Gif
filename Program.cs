@@ -3,36 +3,33 @@ using System.Diagnostics;
 using System.IO;
 
 
-namespace Paper2Gif
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
+        Console.WriteLine("*** Paper 2 Code ***");
+    }
+
+    // Helper function to run terminal commands.
+    // Returns the output given by the program.
+    string RunTerminalCommand(string prog, string args, string dir)
+    {
+        ProcessStartInfo psi = new ProcessStartInfo()
         {
-            Console.WriteLine("*** Paper 2 Code ***");
-        }
+            FileName = prog,
+            WorkingDirectory = dir,
+            Arguments = args,
+            RedirectStandardOutput = true,
+            RedirectStandardError = false,
+            UseShellExecute = false
+        };
 
-        // Helper function to run terminal commands.
-        // Returns the output given by the program.
-        string RunTerminalCommand(string prog, string args, string dir)
-        {
-            ProcessStartInfo psi = new ProcessStartInfo()
-            {
-                FileName = prog,
-                WorkingDirectory = dir,
-                Arguments = args,
-                RedirectStandardOutput = true,
-                RedirectStandardError = false,
-                UseShellExecute = false
-            };
+        Process termProg = Process.Start(psi);
 
-            Process termProg = Process.Start(psi);
+        StreamReader outReader = termProg.StandardOutput;
+        string output = outReader.ReadToEnd();
+        outReader.Dispose();
 
-            StreamReader outReader = termProg.StandardOutput;
-            string output = outReader.ReadToEnd();
-            outReader.Dispose();
-
-            return output;
-        }
+        return output;
     }
 }
