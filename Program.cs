@@ -184,6 +184,7 @@ class Program
             const int h = 210;
             const int x = 35;
             const int y = 35;
+
             RunTerminalCommand
             (
                 "convert",
@@ -204,6 +205,60 @@ class Program
             );
         }
 
+
+        // --- Resize image of first page to use as canvas. ---
+
+        string tmpLrgPath = Path.Combine(tmpOutPath, "lrgPng");
+        RunTerminalCommand("mkdir", tmpLrgPath, tmpOutPath);
+
+        for (int i = 0; i < commitIds.Count; i++)
+        {
+            string inFile = Path.Combine
+            (
+                tmpSmlPath,
+                i.ToString("000") + "-0.png"
+            );
+
+            if (!File.Exists(inFile))
+            {
+                inFile = Path.Combine
+                (
+                    tmpSmlPath,
+                    i.ToString("000") + ".png"
+                );
+            }
+
+            string outFile = Path.Combine
+            (
+                tmpLrgPath,
+                i.ToString("000") + ".png"
+            );
+
+            // ToDo: Make dynamic based on page numbers.
+            const int w = 7 * 140;
+            const int h = 4 * 210;
+            const int x = 0;
+            const int y = 0;
+
+            RunTerminalCommand
+            (
+                "convert",
+                string.Format
+                (
+                    "{0} -extent {1}x{2}+{3}+{4} {5}",
+                    new object[]
+                    {
+                        inFile,
+                        w,
+                        h,
+                        x,
+                        y,
+                        outFile
+                    }
+                ),
+                tmpSmlPath
+            );
+        }
 
 
         // --- Cleanup: Remove temporary folders. ---
