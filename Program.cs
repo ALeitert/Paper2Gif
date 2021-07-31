@@ -321,6 +321,28 @@ class Program
         }
 
 
+        // --- Combine images to gif. ---
+
+        string gifPath = Path.Combine(tmpPath, "gif.gif");
+        string optPath = Path.Combine(tmpPath, "opt.gif");
+
+        // Create gif.
+        RunTerminalCommand
+        (
+            "convert",
+            "-delay 75 -loop 0 *.png  +repage " + gifPath,
+            tmpCnvPath
+        );
+
+        // Optimise it.
+        RunTerminalCommand
+        (
+            "gifsicle",
+            "-i " + gifPath + " --optimize=3 -o " + optPath,
+            tmpPath
+        );
+
+
         // --- Cleanup: Remove temporary folders. ---
 
         RunTerminalCommand("rm", tmpPath + " -r", "./");
