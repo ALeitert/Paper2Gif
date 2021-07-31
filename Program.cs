@@ -49,6 +49,49 @@ class Program
         );
 
 
+        // --- Determine branch to checkout. ---
+
+        // Determine all branches.
+        string allBranches = RunTerminalCommand("git", "branch -l", tmpTexPath);
+        string[] brList = allBranches.Split
+        (
+            new string[] { Environment.NewLine },
+            StringSplitOptions.RemoveEmptyEntries
+        );
+
+        // Clean leading characters.
+        for (int i = 0; i < brList.Length; i++)
+        {
+            brList[i] = brList[i].Substring(2);
+        }
+
+        // Find a desired branch.
+        string coBranch = null;
+
+        if (args.Length >= 3 && Array.IndexOf(brList, args[2]) >= 0)
+        {
+            coBranch = args[2];
+        }
+        else if (Array.IndexOf(brList, "master") >= 0)
+        {
+            coBranch = "master";
+        }
+        else if (Array.IndexOf(brList, "main") >= 0)
+        {
+            coBranch = "main";
+        }
+
+        // Branch found?
+        if (string.IsNullOrEmpty(coBranch))
+        {
+            Console.WriteLine("Unable to find a branch to checkout.");
+            return;
+        }
+
+        // Checkout branch.
+        RunTerminalCommand("git", "checkout " + coBranch, tmpTexPath);
+
+
 
 
         // --- Cleanup: Remove temporary folders. ---
