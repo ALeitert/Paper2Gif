@@ -19,6 +19,23 @@ class Program
 
         //   2: The branch which to use. If not given, the program tries the
         //      branches 'master' and 'main' (in that order).
+
+
+        // --- Check repository directory. ---
+
+        // Path to repository given?
+        if (args.Length < 1)
+        {
+            Console.WriteLine("No path to repository given.");
+            return;
+        }
+
+        string repoGitPath = Path.Combine(args[0], ".git");
+        if (!Directory.Exists(repoGitPath))
+        {
+            Console.WriteLine("Given path is not a git repository.");
+            return;
+        }
     }
 
     // Helper function to run terminal commands.
