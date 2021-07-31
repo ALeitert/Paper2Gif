@@ -40,7 +40,7 @@ class Program
 
     // Helper function to run terminal commands.
     // Returns the output given by the program.
-    string RunTerminalCommand(string prog, string args, string dir)
+    static string RunTerminalCommand(string prog, string args, string dir)
     {
         ProcessStartInfo psi = new ProcessStartInfo()
         {
@@ -52,12 +52,26 @@ class Program
             UseShellExecute = false
         };
 
+
+        // --- Run program. ---
+
         Process termProg = Process.Start(psi);
 
         StreamReader outReader = termProg.StandardOutput;
         string output = outReader.ReadToEnd();
         outReader.Dispose();
 
-        return output;
+
+        // --- Remove ending line break. ---
+
+        string NL = Environment.NewLine;
+        if (output.EndsWith(NL))
+        {
+            return output.Substring(0, output.Length - NL.Length);
+        }
+        else
+        {
+            return output;
+        }
     }
 }
