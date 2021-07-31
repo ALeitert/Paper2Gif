@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -90,6 +91,23 @@ class Program
 
         // Checkout branch.
         RunTerminalCommand("git", "checkout " + coBranch, tmpTexPath);
+
+
+        // --- Determine commit-IDs. ---
+
+        string log = RunTerminalCommand("git", "log --oneline", tmpTexPath);
+        string[] logLines = log.Split
+        (
+            new string[] { Environment.NewLine },
+            StringSplitOptions.RemoveEmptyEntries
+        );
+
+        List<string> commitIds = new List<string>();
+
+        for (int i = 0; i < logLines.Length; i++)
+        {
+            commitIds.Add(logLines[i].Substring(0, 7));
+        }
 
 
 
