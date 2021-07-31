@@ -116,10 +116,16 @@ class Program
         // Create temporary directory for outputs.
         string tmpOutPath = RunTerminalCommand("mktemp", "-d", "./");
 
+        // Created directories.
+        string tmpPdfPath = Path.Combine(tmpOutPath, "latexmk");
+        string tmpPngPath = Path.Combine(tmpOutPath, "png");
+
+        RunTerminalCommand("mkdir", tmpPdfPath, tmpOutPath);
+        RunTerminalCommand("mkdir", tmpPngPath, tmpOutPath);
+
         // Unfortunately needed (both of them).
         // ToDo: find better way to do that.
-        RunTerminalCommand("mkdir", "latexmk", tmpOutPath);
-        RunTerminalCommand("mkdir", "tikzCache", Path.Combine(tmpOutPath, "latexmk"));
+        RunTerminalCommand("mkdir", "tikzCache", tmpPdfPath);
         RunTerminalCommand("mkdir", "tikzCache", tmpTexPath);
 
 
@@ -150,6 +156,18 @@ class Program
 
             // Compile.
             RunTerminalCommand("latexmk", lmkArgs, tmpTexPath);
+
+
+            // Parameters to create images from pdf.
+            string conArgs =
+                "-density 25 " +
+                args[1].Substring(0, args[1].Length - 4) + ".pdf " +
+                "-alpha off " +
+                "-quality 100 " +
+                Path.Combine(tmpPngPath, ver.ToString("000") + ".png");
+
+            // Create images.
+            RunTerminalCommand("convert", conArgs, tmpPdfPath);
         }
 
 
