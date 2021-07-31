@@ -136,7 +136,7 @@ class Program
             return;
         }
 
-        for (int i = commitIds.Count - 1; i >= 0; i--)
+        for (int i = commitIds.Count - 1, ver = 0; i >= 0; i--, ver++)
         {
             RunTerminalCommand("git", "checkout -q " + commitIds[i], tmpTexPath);
 
@@ -263,6 +263,8 @@ class Program
 
         // --- Add small images to "canvas". ---
 
+        string lastHash = null;
+
         for (int i = 0; i < commitIds.Count; i++)
         {
             string canFile = Path.Combine
@@ -304,6 +306,17 @@ class Program
                     tmpCnvPath
                 );
             }
+
+            // Determine SHA-1 hash of created file.
+            string hash = RunTerminalCommand("sha1sum", canFile, "./");
+            hash = hash.Substring(0, 40);
+
+            if (hash == lastHash)
+            {
+                RunTerminalCommand("rm", canFile, "./");
+            }
+
+            lastHash = hash;
         }
 
 
