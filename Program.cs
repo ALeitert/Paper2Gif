@@ -41,7 +41,11 @@ class Program
 
         // --- Create temporary directory and copy the repository into it. ---
 
-        string tmpTexPath = RunTerminalCommand("mktemp", "-d", "./");
+        string tmpPath = RunTerminalCommand("mktemp", "-d", "./");
+
+        string tmpTexPath = Path.Combine(tmpPath, "tex");
+        RunTerminalCommand("mkdir", tmpTexPath, tmpPath);
+
         RunTerminalCommand
         (
             "cp",
@@ -113,15 +117,12 @@ class Program
 
         // --- Compile each version. ---
 
-        // Create temporary directory for outputs.
-        string tmpOutPath = RunTerminalCommand("mktemp", "-d", "./");
-
         // Created directories.
-        string tmpPdfPath = Path.Combine(tmpOutPath, "latexmk");
-        string tmpPngPath = Path.Combine(tmpOutPath, "png");
+        string tmpPdfPath = Path.Combine(tmpPath, "latexmk");
+        string tmpPngPath = Path.Combine(tmpPath, "png");
 
-        RunTerminalCommand("mkdir", tmpPdfPath, tmpOutPath);
-        RunTerminalCommand("mkdir", tmpPngPath, tmpOutPath);
+        RunTerminalCommand("mkdir", tmpPdfPath, tmpPath);
+        RunTerminalCommand("mkdir", tmpPngPath, tmpPath);
 
         // Unfortunately needed (both of them).
         // ToDo: find better way to do that.
@@ -148,7 +149,7 @@ class Program
 
             // Parameters for compiler.
             string lmkArgs =
-                "-outdir='" + Path.Combine(tmpOutPath, "latexmk") + "' " +
+                "-outdir='" + Path.Combine(tmpPath, "latexmk") + "' " +
                 "-quiet -pdf -pdflatex='" +
                     "pdflatex -shell-escape -interaction=nonstopmode %O %S" +
                     "' " +
@@ -173,8 +174,8 @@ class Program
 
         // --- Crop images. ---
 
-        string tmpSmlPath = Path.Combine(tmpOutPath, "smlPng");
-        RunTerminalCommand("mkdir", tmpSmlPath, tmpOutPath);
+        string tmpSmlPath = Path.Combine(tmpPath, "smlPng");
+        RunTerminalCommand("mkdir", tmpSmlPath, tmpPath);
 
         DirectoryInfo pngDir = new DirectoryInfo(tmpPngPath);
         foreach (FileInfo fi in pngDir.GetFiles())
@@ -208,8 +209,8 @@ class Program
 
         // --- Resize image of first page to use as canvas. ---
 
-        string tmpCnvPath = Path.Combine(tmpOutPath, "cnvPng");
-        RunTerminalCommand("mkdir", tmpCnvPath, tmpOutPath);
+        string tmpCnvPath = Path.Combine(tmpPath, "cnvPng");
+        RunTerminalCommand("mkdir", tmpCnvPath, tmpPath);
 
         for (int i = 0; i < commitIds.Count; i++)
         {
@@ -322,8 +323,7 @@ class Program
 
         // --- Cleanup: Remove temporary folders. ---
 
-        RunTerminalCommand("rm", tmpTexPath + " -r", "./");
-        RunTerminalCommand("rm", tmpOutPath + " -r", "./");
+        RunTerminalCommand("rm", tmpPath + " -r", "./");
     }
 
     // Helper function to run terminal commands.
