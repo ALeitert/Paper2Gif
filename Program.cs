@@ -208,8 +208,8 @@ class Program
 
         // --- Resize image of first page to use as canvas. ---
 
-        string tmpLrgPath = Path.Combine(tmpOutPath, "lrgPng");
-        RunTerminalCommand("mkdir", tmpLrgPath, tmpOutPath);
+        string tmpCnvPath = Path.Combine(tmpOutPath, "cnvPng");
+        RunTerminalCommand("mkdir", tmpCnvPath, tmpOutPath);
 
         for (int i = 0; i < commitIds.Count; i++)
         {
@@ -230,7 +230,7 @@ class Program
 
             string outFile = Path.Combine
             (
-                tmpLrgPath,
+                tmpCnvPath,
                 i.ToString("000") + ".png"
             );
 
@@ -258,6 +258,52 @@ class Program
                 ),
                 tmpSmlPath
             );
+        }
+
+
+        // --- Add small images to "canvas". ---
+
+        for (int i = 0; i < commitIds.Count; i++)
+        {
+            string canFile = Path.Combine
+            (
+                tmpCnvPath,
+                i.ToString("000") + ".png"
+            );
+
+            for (int page = 1; ; page++)
+            {
+                string pgFile = Path.Combine
+                (
+                    tmpSmlPath,
+                    string.Format("{0:000}-{1}.png", i, page)
+                );
+
+                // Out of pages.
+                if (!File.Exists(pgFile)) break;
+
+                // ToDo: make dynamic.
+                int x = page / 4;
+                int y = page % 4;
+
+                RunTerminalCommand
+                (
+                    "composite",
+                    string.Format
+                    (
+                        "-geometry +{0}+{1} {3} {2} {2}",
+                        new object[]
+                        {
+                            // ToDo: make dynamic.
+                            x * 140,
+                            y * 210,
+                            canFile,
+                            pgFile
+                        }
+                    ),
+                    tmpCnvPath
+                );
+            }
         }
 
 
